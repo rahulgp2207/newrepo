@@ -1,4 +1,5 @@
 #include<stdio.h>
 int main() {
-    printf("hello");
+    printf("hello\n");
+    printf("This is second message");
 }
