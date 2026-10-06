@@ -1,0 +1,27 @@
+cd ~/tmp/llama.cpp
+
+pkill -f llama-server
+
+nohup ./build-vulkan/bin/llama-server \
+  -hf Qwen/Qwen3-4B-GGUF:Q4_K_M \
+  --device Vulkan0 \
+  -ngl 99 \
+  --jinja \
+  --reasoning off \
+  --reasoning-budget 0 \
+  -c 2048 \
+  -t 6 \
+  --host 127.0.0.1 \
+  --port 8080 > ~/tmp/llama-server.log 2>&1 &
+
+# 1. Verify the server started on the AMD GPU
+tail -n 20 ~/tmp/llama-server.log | grep -E "Vulkan0|listening"
+
+# 2. Run queries using your Python client
+cd ~/projects/qwen-local
+source venv/bin/activate
+python app.py "What is the function of a translation lookaside buffer (TLB)?"
+
+# 3. Stop the server when finished
+pkill -f llama-server
+  
